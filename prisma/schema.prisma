@@ -1,0 +1,120 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model File {
+  id             String             @id @default(cuid())
+  status         FileStatus
+  uploadId       String?
+  name           String
+  extension      String
+  uploadLocation FileUploadLocation
+  bucket         String?
+  serverPath     String?
+  contentType    String
+  size           Int
+  width          Int?
+  height         Int?
+  createdAt      DateTime           @default(now())
+  User           User[]
+  AppConfig      AppConfig[]
+}
+
+model AppConfig {
+  id            String   @id @default(cuid())
+  faviconFileId String?
+  title         String?
+  description   String?
+  awsRegion     String?
+  isUseAwsS3    Boolean?
+  awsS3Bucket   String?
+  createdAt     DateTime @default(now())
+
+  faviconFile File? @relation(fields: [faviconFileId], references: [id])
+}
+
+enum FileUploadLocation {
+  LOCAL
+  AWS_S3
+}
+
+enum FileStatus {
+  READY
+  PROGRESS
+  DONE
+  ERROR
+}
+
+model Account {
+  id                 String    @id @default(cuid())
+  userId             String
+  providerType       String
+  providerId         String
+  providerAccountId  String
+  refreshToken       String?
+  accessToken        String?
+  accessTokenExpires DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  user               User      @relation(fields: [userId], references: [id])
+
+  @@unique([providerId, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  expires      DateTime
+  sessionToken String   @unique
+  accessToken  String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  nickname      String    @unique
+  avatarId      String?
+  username      String?   @unique
+  password      String?
+  salt          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  avatar        File?     @relation(fields: [avatarId], references: [id])
+}
+
+model VerificationRequest {
+  id         String   @id @default(cuid())
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([identifier, token])
+}
+
+model AdminMenu {
+  id        String   @id @default(cuid())
+  parentId  String?
+  name      String
+  url       String?
+  icon      String?
+  order     Int
+  createdAt DateTime @default(now())
+
+  parent   AdminMenu?  @relation("AdminMenuToParent", fields: [parentId], references: [id])
+  children AdminMenu[] @relation("AdminMenuToParent")
+}

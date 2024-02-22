@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "target": "ES5",
+    "baseUrl": ".",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -12,13 +14,30 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "experimentalDecorators": true,
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "#/*": ["./*"]
+      "#apis/*": ["apis/*"],
+      "#app/*": ["app/*"],
+      "#aws/*": ["aws/*"],
+      "#assets/*": ["assets/*"],
+      "#commons/*": ["commons/*"],
+      "#components/*": ["components/*"],
+      "#hooks/*": ["hooks/*"],
+      "#mocks/*": ["mocks/*"],
+      "#libs/*": ["libs/*"],
+      "#pages/*": ["pages/*"],
+      "#prisma/*": ["prisma/*"],
+      "#public/*": ["public/*"],
+      "#stores/*": ["stores/*"],
+      "#queries/*": ["queries/*"],
+      "#styles/*": ["styles/*"],
+      "#types/*": ["types/*"],
+      "#utils/*": ["utils/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
